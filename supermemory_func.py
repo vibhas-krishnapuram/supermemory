@@ -21,28 +21,36 @@ client = Supermemory(
 #     container_tag="user_123"
 # )
 
-results = client.search.memories(
-    q="context about user",
-    container_tag="user_125",
-    search_mode="hybrid",
-    limit=5
-)
+# results = client.search.memories(
+#     q="context about user",
+#     container_tag="user_125",
+#     search_mode="hybrid",
+#     limit=5
+# )
 
 def add_memory(payload):
-    client = Supermemory(
-    api_key = os.getenv("SUPERMEMORY_API_KEY"))
-
     summary = payload["summary"]
-    call_id = payload["call_id"]
+    call_id = payload["phone"] # payload["call_id"]
     phone_num = payload["phone"]
     callback_time = payload["callback_time"]
 
     client.add(
-    content=summary,
-    container_tag=call_id, # use phone number instead after testing
-    metadata=payload
+        content=summary,
+        container_tag=call_id, # use phone number instead after testing
+        metadata=payload
+    )
+
+def get_caller_context(phone):
+    results = client.search.memories(
+    q= f"give as much information about user from last call to help the next phone call be personable and smooth: {phone}",
+    search_mode="hybrid",
+    limit=5
 )
 
 
-# for result in results.results:
+# phone_num = "+17342941312"
+# ans = get_caller_context(phone_num)
+# #print(ans)
+
+# for result in ans.results:
 #     print(result.memory or result.chunk, result.similarity)

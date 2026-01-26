@@ -1,7 +1,5 @@
 from fastapi import APIRouter, Request, FastAPI, BackgroundTasks, Depends
 from fastapi.responses import JSONResponse
-from supermemory import Supermemory
-from retell import Retell
 
 import json
 from datetime import datetime
@@ -10,19 +8,22 @@ from dotenv import load_dotenv
 
 from sqlalchemy.orm import Session
 from db.models import Task_Manager
-from db.database import get_db
+from db.database import get_db, engine, Base
 
 from find_date import CallbackTimeExtractor
 from process_webhook import process_webhook_pipeline
 
+from retell import Retell
+
 load_dotenv()
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
 router = APIRouter()
-client = Supermemory(api_key=os.getenv("SUPERMEMORY_API_KEY"))
-retell = Retell(api_key = os.getenv("RETELL_API_KEY"))
 
+retell = Retell(api_key=os.environ["RETELL_API_KEY"])
 
 @app.post("/api/webhooks/retell")
 async def retell_call_ended(request: Request, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
@@ -41,7 +42,7 @@ async def retell_call_ended(request: Request, background_tasks: BackgroundTasks,
 
         new_task = Task_Manager(
             call_id=call_id,
-            phone=data.get("from_number"),
+            phone=data.get("to_number"),
             summary=data.get("call_analysis", {}).get("call_summary"),
             processed=False      
         )
@@ -62,3 +63,7 @@ async def retell_call_ended(request: Request, background_tasks: BackgroundTasks,
         return JSONResponse(
             status_code=500, content={"message": "Internal Server Error"}
         )
+
+@app.get("/test")
+async def test():
+    return {"status": "working"}
