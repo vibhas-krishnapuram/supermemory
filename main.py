@@ -42,7 +42,7 @@ async def retell_call_ended(request: Request, background_tasks: BackgroundTasks,
 
         new_task = Task_Manager(
             call_id=call_id,
-            phone=data.get("to_number"),
+            phone=data.get("to_number", "+17342941312"),
             summary=data.get("call_analysis", {}).get("call_summary"),
             processed=False      
         )

@@ -1,7 +1,16 @@
-from sqlalchemy import Column, Integer, String, create_engine, ForeignKey, Text, Boolean
+from sqlalchemy import Column, Integer, String, create_engine, ForeignKey, Text, Boolean, Enum, DateTime
 from sqlalchemy.orm import Mapped, sessionmaker, mapped_column, declarative_base, relationship
 
 from db.database import Base
+from datetime import datetime
+import enum 
+
+class CallOutcome(enum.Enum):
+    SUCCESSFUL = "SUCCESSFUL"
+    CALLBACK = "CALLBACK"
+    NOT_INTERESTED = "NOT_INTERESTED"
+    MISSED = "MISSED"
+
 
 class Task_Manager(Base):
     __tablename__ = "taskmanager"
@@ -13,10 +22,18 @@ class Task_Manager(Base):
     processed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     last_error: Mapped[str] = mapped_column(Text, nullable=True)
 
+    outcome: Mapped[CallOutcome] = mapped_column(
+        Enum(CallOutcome),
+        nullable=True,
+        index=True
+    )
 
-     # Audit trail FUTURE IMPLENTATION
-    # created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    # processed_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    callback_time: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+        index=True
+    )
+
 
     def __repr__(self):
         return f"<TaskManager(call_id={self.call_id}, phone={self.phone}, processed={self.processed})>"
