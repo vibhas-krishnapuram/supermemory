@@ -16,6 +16,7 @@ class Task_Manager(Base):
     __tablename__ = "taskmanager"
 
     call_id: Mapped[str] = mapped_column(String, primary_key=True, index=True)
+    agent_id: Mapped[str] = mapped_column(String)
     phone: Mapped[str] = mapped_column(String, nullable=False)
     summary: Mapped[str] = mapped_column(Text, nullable=False)
 
@@ -28,11 +29,7 @@ class Task_Manager(Base):
         index=True
     )
 
-    callback_time: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        nullable=True,
-        index=True
-    )
+    callback_time: Mapped[str] = mapped_column(String, nullable=True, index=True)
 
 
     def __repr__(self):
