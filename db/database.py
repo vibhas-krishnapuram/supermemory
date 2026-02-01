@@ -1,11 +1,17 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = "sqlite:///tasks.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "tasks.db")
+
+# DATABASE_URL = f"sqlite:///{DB_PATH}"
+# DATABASE_URL = "postgresql://vibhas@localhost:5432/cvbackend"
+DATABASE_URL = "postgresql://postgres:KJintel-Solutions123!@db.msarlqjaxtbbdejyunij.supabase.co:5432/postgres"
 
 engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False},  
+    DATABASE_URL
+    # connect_args={"check_same_thread": False},
 )
 
 SessionLocal = sessionmaker(

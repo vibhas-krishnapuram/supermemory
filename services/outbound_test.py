@@ -1,5 +1,5 @@
 from retell import Retell
-from Memory_Functions import get_caller_context, format_caller_context
+from services.Memory_Functions import get_caller_context, format_caller_context
 from datetime import datetime
 import os
 
@@ -11,25 +11,27 @@ key = os.getenv("RETELL_API_KEY_DAVID")
 client = Retell(api_key=key)
 
 
-def start_call(from_number, to_number, agent_id, is_callback=False):
+def start_call(from_number, to_number, agent_id, is_callback=False):  # ✅ Add default parameter
     """
     Trigger a call via Retell and pass previous conversation context.
     """
     try:
-  
         raw_context = get_caller_context(to_number)
-        formatted_context = format_caller_context(raw_context)
+        formatted_context = format_caller_context(raw_context, is_callback)  # ✅ Pass is_callback
 
         print(f"[START_CALL] Triggered for {to_number} at {datetime.now()}")
-        print(f"[START_CALL] Context entries: {len(raw_context) if raw_context else 0}")
+        print(f"[START_CALL] Is callback: {is_callback}")  # ✅ Add debug log
+        print(f"[START_CALL] Context entries: {len(raw_context.results) if raw_context and raw_context.results else 0}")
         print(f"[START_CALL] Formatted context:\n{formatted_context}")
 
+        # ✅ IMPROVED dynamic variables
         dynamic_vars = {
-            "callback_history": formatted_context,
-            "is_callback": "true" if is_callback else "false" 
+            "previous_conversation": formatted_context,  # Changed from callback_history
+            "is_callback": "yes" if is_callback else "no",  # Changed from true/false string
+            "customer_phone": to_number,
+            "call_timestamp": datetime.now(pytz.timezone('America/Detroit')).strftime("%B %d, %Y at %I:%M %p")
         }
 
-        # Create the call
         phone_call_response = client.call.create_phone_call(
             from_number=from_number,
             to_number=to_number,
@@ -38,8 +40,10 @@ def start_call(from_number, to_number, agent_id, is_callback=False):
         )
 
         print(f"[START_CALL] Call initiated, Retell call ID: {phone_call_response.call_id}")
+        return phone_call_response.call_id
 
     except Exception as e:
         print(f"[START_CALL ERROR] Failed to initiate call: {e}")
         import traceback
         traceback.print_exc()
+        return None
