@@ -11,23 +11,23 @@ key = os.getenv("RETELL_API_KEY_DAVID")
 client = Retell(api_key=key)
 
 
-def start_call(from_number, to_number, agent_id, is_callback=False):  # ✅ Add default parameter
+def start_call(from_number, to_number, agent_id, is_callback=False):  #  default parameter
     """
     Trigger a call via Retell and pass previous conversation context.
     """
     try:
         raw_context = get_caller_context(to_number)
-        formatted_context = format_caller_context(raw_context, is_callback)  # ✅ Pass is_callback
+        formatted_context = format_caller_context(raw_context, is_callback)  # Pass is_callback
 
         print(f"[START_CALL] Triggered for {to_number} at {datetime.now()}")
-        print(f"[START_CALL] Is callback: {is_callback}")  # ✅ Add debug log
+        print(f"[START_CALL] Is callback: {is_callback}")  #  debug log
         print(f"[START_CALL] Context entries: {len(raw_context.results) if raw_context and raw_context.results else 0}")
         print(f"[START_CALL] Formatted context:\n{formatted_context}")
 
-        # ✅ IMPROVED dynamic variables
+
         dynamic_vars = {
-            "previous_conversation": formatted_context,  # Changed from callback_history
-            "is_callback": "yes" if is_callback else "no",  # Changed from true/false string
+            "previous_conversation": formatted_context,  
+            "is_callback": "yes" if is_callback else "no", 
             "customer_phone": to_number,
             "call_timestamp": datetime.now(pytz.timezone('America/Detroit')).strftime("%B %d, %Y at %I:%M %p")
         }

@@ -85,8 +85,7 @@ def format_caller_context(response, is_callback=False):
             if res.metadata and 'callback_time' in res.metadata and res.metadata['callback_time']:
                 formatted_context.append(f"Scheduled callback: {res.metadata['callback_time']}")
                 
-            formatted_context.append("")  # Blank line between entries
-
+            formatted_context.append("")  
     # Only add callback reminder if is_callback is True
     if is_callback:
         formatted_context.append("---")
