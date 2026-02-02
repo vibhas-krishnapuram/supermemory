@@ -6,15 +6,11 @@ from pydantic import BaseModel, Field
 from typing import Optional
 import pytz
 
+from db.models import CallOutcome
+
 load_dotenv()
 
 client = OpenAI()
-
-class CallOutcome(str, Enum):
-    SUCCESSFUL = "SUCCESSFUL"
-    CALLBACK = "CALLBACK"
-    NOT_INTERESTED = "NOT_INTERESTED"
-    MISSED = "MISSED"
 
 class CallAnalysis(BaseModel):
     outcome: CallOutcome

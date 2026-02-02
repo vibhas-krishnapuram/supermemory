@@ -5,7 +5,7 @@ from db.database import Base
 from datetime import datetime
 import enum 
 
-class CallOutcome(enum.Enum):
+class CallOutcome(str, enum.Enum):
     SUCCESSFUL = "SUCCESSFUL"
     CALLBACK = "CALLBACK"
     NOT_INTERESTED = "NOT_INTERESTED"
